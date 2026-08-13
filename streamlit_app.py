@@ -30,37 +30,37 @@ def apply_theme(dark_mode: bool) -> None:
     """Apply an accessible app-wide palette without relying on browser extensions."""
     palette = (
         {
-            "page": "#0b1110",
-            "page_glow": "rgba(46, 181, 137, 0.13)",
-            "surface": "#111a18",
-            "surface_raised": "#17231f",
-            "sidebar": "rgba(12, 19, 17, 0.97)",
-            "text": "#f3f7f4",
-            "muted": "#9fb0aa",
-            "border": "rgba(184, 219, 204, 0.16)",
-            "accent": "#55d6a9",
-            "accent_dark": "#2a9e78",
-            "accent_soft": "rgba(85, 214, 169, 0.12)",
-            "warm": "#f6bd62",
-            "shadow": "rgba(0, 0, 0, 0.32)",
-            "input": "#0e1715",
+            "page": "#121212",
+            "page_glow": "rgba(0, 230, 118, 0.10)",
+            "surface": "#181818",
+            "surface_raised": "#1e1e1e",
+            "sidebar": "#1e1e1e",
+            "text": "#e0e0e0",
+            "muted": "#a8b0ac",
+            "border": "rgba(224, 224, 224, 0.14)",
+            "accent": "#00e676",
+            "accent_dark": "#00a854",
+            "accent_soft": "rgba(0, 230, 118, 0.12)",
+            "shadow": "rgba(0, 0, 0, 0.42)",
+            "input": "#242424",
+            "button_text": "#07150e",
         }
         if dark_mode
         else {
-            "page": "#f7f5ef",
-            "page_glow": "rgba(30, 129, 97, 0.12)",
-            "surface": "#fffefa",
+            "page": "#f8f9fa",
+            "page_glow": "rgba(0, 128, 128, 0.10)",
+            "surface": "#ffffff",
             "surface_raised": "#ffffff",
-            "sidebar": "rgba(239, 244, 239, 0.97)",
-            "text": "#15231f",
-            "muted": "#64736e",
-            "border": "rgba(28, 72, 58, 0.14)",
-            "accent": "#1f8a68",
-            "accent_dark": "#14694f",
-            "accent_soft": "rgba(31, 138, 104, 0.10)",
-            "warm": "#b96f28",
-            "shadow": "rgba(27, 57, 47, 0.11)",
-            "input": "#fbfcf9",
+            "sidebar": "#e9ecef",
+            "text": "#212529",
+            "muted": "#5f686f",
+            "border": "rgba(33, 37, 41, 0.14)",
+            "accent": "#008080",
+            "accent_dark": "#006666",
+            "accent_soft": "rgba(0, 128, 128, 0.10)",
+            "shadow": "rgba(33, 37, 41, 0.12)",
+            "input": "#ffffff",
+            "button_text": "#ffffff",
         }
     )
     color_scheme = "dark" if dark_mode else "light"
@@ -80,6 +80,11 @@ def apply_theme(dark_mode: bool) -> None:
         [data-testid="stSidebar"] {{
             background: {palette['sidebar']};
             border-right: 1px solid {palette['border']};
+        }}
+        [data-testid="stSidebarCollapseButton"] button,
+        [data-testid="collapsedControl"] button {{
+            color: {palette['text']};
+            background: {palette['surface']};
         }}
         [data-testid="stSidebar"] > div:first-child {{ padding-top: 1.5rem; }}
         h1, h2, h3, p, label, .stMarkdown, [data-testid="stWidgetLabel"] {{
@@ -194,12 +199,22 @@ def apply_theme(dark_mode: bool) -> None:
             color: {palette['text']} !important;
             background: {palette['accent_soft']} !important;
         }}
+        div[data-baseweb="popover"],
+        div[data-baseweb="menu"],
+        ul[role="listbox"] {{
+            color: {palette['text']} !important;
+            background: {palette['surface_raised']} !important;
+        }}
+        li[role="option"] {{ color: {palette['text']} !important; }}
+        li[role="option"]:hover {{ background: {palette['accent_soft']} !important; }}
+        [data-testid="stCheckbox"] svg,
+        [data-testid="stToggle"] svg {{ color: {palette['accent']} !important; }}
         [data-testid="stFormSubmitButton"] button,
         [data-testid="stDownloadButton"] button {{
             min-height: 3rem;
             border: 0;
             border-radius: 13px;
-            color: #fff !important;
+            color: {palette['button_text']} !important;
             background: linear-gradient(120deg, {palette['accent']}, {palette['accent_dark']});
             box-shadow: 0 10px 24px {palette['shadow']};
             font-weight: 760;
