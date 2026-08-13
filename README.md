@@ -1,8 +1,8 @@
 # Synthetic CV Generator
 
-A public Streamlit app for generating batches of realistic synthetic CVs with your
-own OpenAI or Groq API key. Select the countries, industries, experience levels,
-career progression, output formats, and ZIP layout from the browser.
+A public Streamlit app for generating batches of realistic synthetic CVs with your own
+OpenAI or Groq API key. Select the countries, industries, experience levels, career
+progression, output formats, and ZIP layout from the browser.
 
 The app supports:
 
