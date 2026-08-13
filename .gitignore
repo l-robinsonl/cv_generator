@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+venv/
+.env
+.streamlit/secrets.toml
+generated_cvs/
+*.zip
+.DS_Store
