@@ -269,10 +269,10 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
     palette = THEMES[theme_name]["dark" if dark_mode else "light"]
     color_scheme = "dark" if dark_mode else "light"
     shadow = "rgba(0,0,0,.20)" if dark_mode else "rgba(23,33,28,.07)"
-    sun_color = "#FFD166" if dark_mode else "#9A4B00"
-    moon_color = "#DCEBFF" if dark_mode else "#315A9B"
-    sun_surface = "#49370D" if dark_mode else "#FFF2BD"
-    moon_surface = "#172554" if dark_mode else "#E5EEFF"
+    appearance_icon_color = "#DCEBFF" if dark_mode else "#E49B0F"
+    appearance_focus = (
+        "rgba(176, 207, 255, .45)" if dark_mode else "rgba(228, 155, 15, .35)"
+    )
     st.markdown(
         f"""
         <style>
@@ -512,41 +512,31 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
             border-color: {palette['accent']} !important;
             background-color: {palette['accent']} !important;
         }}
-        .st-key-appearance_mode button {{
-            min-width: 5.4rem;
+        .st-key-appearance_toggle [data-testid="stButton"] button {{
+            width: 2.5rem;
+            min-width: 2.5rem;
             min-height: 2.5rem;
-            border-color: {palette['border']} !important;
-            color: {palette['muted']} !important;
-            background: {palette['raised']} !important;
-            font-size: .88rem;
-            font-weight: 750;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 50%;
+            color: {appearance_icon_color} !important;
+            background: transparent !important;
             box-shadow: none !important;
+            font-size: 1.65rem;
+            line-height: 1;
         }}
-        .st-key-appearance_mode button:first-of-type,
-        .st-key-appearance_mode button:first-of-type * {{
-            color: {sun_color} !important;
+        .st-key-appearance_toggle [data-testid="stButton"] button * {{
+            color: {appearance_icon_color} !important;
         }}
-        .st-key-appearance_mode button:last-of-type,
-        .st-key-appearance_mode button:last-of-type * {{
-            color: {moon_color} !important;
+        .st-key-appearance_toggle [data-testid="stButton"] button:hover {{
+            color: {appearance_icon_color} !important;
+            background: transparent !important;
+            transform: scale(1.1);
         }}
-        .st-key-appearance_mode button[data-testid*="segmented_controlActive"]:first-of-type {{
-            border-color: #E8A927 !important;
-            background: {sun_surface} !important;
-            box-shadow: 0 0 0 2px rgba(232, 169, 39, .18) !important;
-        }}
-        .st-key-appearance_mode button[data-testid*="segmented_controlActive"]:last-of-type {{
-            border-color: #789FE7 !important;
-            background: {moon_surface} !important;
-            box-shadow: 0 0 0 2px rgba(120, 159, 231, .2) !important;
-        }}
-        .st-key-appearance_mode button:first-of-type:hover {{
-            border-color: #E8A927 !important;
-            background: {sun_surface} !important;
-        }}
-        .st-key-appearance_mode button:last-of-type:hover {{
-            border-color: #789FE7 !important;
-            background: {moon_surface} !important;
+        .st-key-appearance_toggle [data-testid="stButton"] button:focus-visible {{
+            outline: 2px solid {appearance_focus} !important;
+            outline-offset: 2px;
+            background: transparent !important;
         }}
         [data-baseweb="progress-bar"] > div > div > div {{
             background-color: {palette['accent']} !important;
@@ -667,13 +657,19 @@ with st.sidebar:
         st.session_state.appearance_mode = (
             "dark" if st.session_state.get("dark_mode", False) else "light"
         )
-    appearance_mode = st.segmented_control(
-        "Appearance",
-        options=("light", "dark"),
-        format_func=lambda value: {"light": "☀ Light", "dark": "☾ Dark"}[value],
-        key="appearance_mode",
+    dark_mode = st.session_state.appearance_mode == "dark"
+    appearance_icon = "☾" if dark_mode else "☀"
+    appearance_help = (
+        "Switch to light appearance" if dark_mode else "Switch to dark appearance"
     )
-    dark_mode = appearance_mode == "dark"
+    if st.button(
+        appearance_icon,
+        key="appearance_toggle",
+        help=appearance_help,
+        type="tertiary",
+    ):
+        st.session_state.appearance_mode = "light" if dark_mode else "dark"
+        st.rerun()
 
 apply_theme(theme_name, dark_mode)
 
