@@ -269,6 +269,10 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
     palette = THEMES[theme_name]["dark" if dark_mode else "light"]
     color_scheme = "dark" if dark_mode else "light"
     shadow = "rgba(0,0,0,.20)" if dark_mode else "rgba(23,33,28,.07)"
+    sun_color = "#FFD166" if dark_mode else "#9A4B00"
+    moon_color = "#DCEBFF" if dark_mode else "#315A9B"
+    sun_surface = "#49370D" if dark_mode else "#FFF2BD"
+    moon_surface = "#172554" if dark_mode else "#E5EEFF"
     st.markdown(
         f"""
         <style>
@@ -508,11 +512,41 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
             border-color: {palette['accent']} !important;
             background-color: {palette['accent']} !important;
         }}
-        [data-testid="stToggle"] [data-baseweb="checkbox"]:has(input:checked) > div:first-of-type {{
-            background-color: {palette['accent']} !important;
+        .st-key-appearance_mode button {{
+            min-width: 5.4rem;
+            min-height: 2.5rem;
+            border-color: {palette['border']} !important;
+            color: {palette['muted']} !important;
+            background: {palette['raised']} !important;
+            font-size: .88rem;
+            font-weight: 750;
+            box-shadow: none !important;
         }}
-        [data-testid="stToggle"] [data-baseweb="checkbox"]:has(input:checked) > div:first-of-type > div {{
-            background-color: {palette['accent_text']} !important;
+        .st-key-appearance_mode button:first-of-type,
+        .st-key-appearance_mode button:first-of-type * {{
+            color: {sun_color} !important;
+        }}
+        .st-key-appearance_mode button:last-of-type,
+        .st-key-appearance_mode button:last-of-type * {{
+            color: {moon_color} !important;
+        }}
+        .st-key-appearance_mode button[data-testid*="segmented_controlActive"]:first-of-type {{
+            border-color: #E8A927 !important;
+            background: {sun_surface} !important;
+            box-shadow: 0 0 0 2px rgba(232, 169, 39, .18) !important;
+        }}
+        .st-key-appearance_mode button[data-testid*="segmented_controlActive"]:last-of-type {{
+            border-color: #789FE7 !important;
+            background: {moon_surface} !important;
+            box-shadow: 0 0 0 2px rgba(120, 159, 231, .2) !important;
+        }}
+        .st-key-appearance_mode button:first-of-type:hover {{
+            border-color: #E8A927 !important;
+            background: {sun_surface} !important;
+        }}
+        .st-key-appearance_mode button:last-of-type:hover {{
+            border-color: #789FE7 !important;
+            background: {moon_surface} !important;
         }}
         [data-baseweb="progress-bar"] > div > div > div {{
             background-color: {palette['accent']} !important;
@@ -629,7 +663,17 @@ with st.sidebar:
         f'<div class="palette-swatches">{swatches}</div>',
         unsafe_allow_html=True,
     )
-    dark_mode = st.toggle("Dark appearance", key="dark_mode")
+    if "appearance_mode" not in st.session_state:
+        st.session_state.appearance_mode = (
+            "dark" if st.session_state.get("dark_mode", False) else "light"
+        )
+    appearance_mode = st.segmented_control(
+        "Appearance",
+        options=("light", "dark"),
+        format_func=lambda value: {"light": "☀ Light", "dark": "☾ Dark"}[value],
+        key="appearance_mode",
+    )
+    dark_mode = appearance_mode == "dark"
 
 apply_theme(theme_name, dark_mode)
 
