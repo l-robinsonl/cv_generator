@@ -7,11 +7,12 @@ progression, output formats, and ZIP layout from the browser.
 The app supports:
 
 - United States and United Kingdom CVs, with officially reserved fictional phone
-  number ranges
+  number ranges; UK CVs use mobile numbers only and never landlines
 - Three clear phone-routing modes: country-reserved numbers, unique `+210` demo
   numbers for every CV, or an exact demo allocation with the remainder drawn from
   the selected-country mix or one chosen country's reserved range
-- Four selectable colour themes, each with purpose-designed light and dark variants
+- Twelve selectable colour themes, from restrained palettes to neon colourways, each
+  with purpose-designed light and dark variants
 - OpenAI (default: `gpt-4.1-mini`) and Groq, plus a custom OpenAI-compatible base URL
 - Ten numbered industries, including Sales and Business Development
 - PDF, DOCX, TXT, or a balanced/random mix

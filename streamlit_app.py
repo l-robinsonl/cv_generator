@@ -109,6 +109,158 @@ THEMES = {
             "hero_text": "#FAF7F9", "hero_muted": "#C2B7BD",
         },
     },
+    "Neon Lime": {
+        "swatches": ("#B6FF3B", "#72FF6A", "#10140D", "#20251C", "#F4FFE7"),
+        "light": {
+            "page": "#F7FAF3", "surface": "#FFFFFF", "raised": "#FBFDF9",
+            "sidebar": "#F0F5EA", "text": "#192014", "muted": "#626D5A",
+            "border": "#DDE6D5", "border_strong": "#C3D0B8", "accent": "#3F6F00",
+            "accent_hover": "#315700", "accent_text": "#FFFFFF", "soft": "#E9F6D8",
+            "hero": "#12180E", "hero_accent": "#B6FF3B",
+            "hero_text": "#F7FFE9", "hero_muted": "#C0CFB3",
+        },
+        "dark": {
+            "page": "#0A0D08", "surface": "#11150E", "raised": "#171C13",
+            "sidebar": "#0E120C", "text": "#F2F8EC", "muted": "#9FAA98",
+            "border": "#293022", "border_strong": "#3B4630", "accent": "#B6FF3B",
+            "accent_hover": "#C5FF64", "accent_text": "#142000", "soft": "#26331B",
+            "hero": "#0E140A", "hero_accent": "#B6FF3B",
+            "hero_text": "#F5FFE8", "hero_muted": "#B6C8A7",
+        },
+    },
+    "Laser Pink": {
+        "swatches": ("#FF3CAC", "#784BA0", "#2B86C5", "#10101A", "#F7F0FF"),
+        "light": {
+            "page": "#F9F7FB", "surface": "#FFFFFF", "raised": "#FCFAFD",
+            "sidebar": "#F3EFF7", "text": "#221629", "muted": "#716777",
+            "border": "#E6DEEB", "border_strong": "#CEC1D6", "accent": "#A51D70",
+            "accent_hover": "#851659", "accent_text": "#FFFFFF", "soft": "#F7E4F0",
+            "hero": "#171421", "hero_accent": "#FF5DB7",
+            "hero_text": "#FCF8FF", "hero_muted": "#C9C0D0",
+        },
+        "dark": {
+            "page": "#0D0B13", "surface": "#14111D", "raised": "#1B1726",
+            "sidebar": "#100D18", "text": "#F6F1FA", "muted": "#ADA3B5",
+            "border": "#30293B", "border_strong": "#463952", "accent": "#FF66BC",
+            "accent_hover": "#FF85C9", "accent_text": "#2B001B", "soft": "#352039",
+            "hero": "#15101F", "hero_accent": "#FF66BC",
+            "hero_text": "#FCF7FF", "hero_muted": "#C2B6CA",
+        },
+    },
+    "Cobalt": {
+        "swatches": ("#245BFF", "#12B5E5", "#0B163F", "#EFF5FF", "#8EA7FF"),
+        "light": {
+            "page": "#F6F8FD", "surface": "#FFFFFF", "raised": "#FBFCFF",
+            "sidebar": "#EEF2FA", "text": "#111C3E", "muted": "#64708C",
+            "border": "#DCE3F2", "border_strong": "#C0CBE1", "accent": "#2450C2",
+            "accent_hover": "#193D9B", "accent_text": "#FFFFFF", "soft": "#E7EEFF",
+            "hero": "#0E1B49", "hero_accent": "#5B83FF",
+            "hero_text": "#F7F9FF", "hero_muted": "#BCC8E8",
+        },
+        "dark": {
+            "page": "#0A0F1E", "surface": "#11182A", "raised": "#172139",
+            "sidebar": "#0D1424", "text": "#F1F4FC", "muted": "#A2ACC4",
+            "border": "#28344D", "border_strong": "#3A4A6A", "accent": "#7FA0FF",
+            "accent_hover": "#9AB4FF", "accent_text": "#0C1734", "soft": "#202E52",
+            "hero": "#0D183A", "hero_accent": "#69D6F3",
+            "hero_text": "#F6F8FF", "hero_muted": "#AFBCDC",
+        },
+    },
+    "Ember": {
+        "swatches": ("#FF6B35", "#F7C548", "#2A1711", "#FFF7F2", "#8C2F16"),
+        "light": {
+            "page": "#FAF7F5", "surface": "#FFFFFF", "raised": "#FDFBFA",
+            "sidebar": "#F5F0ED", "text": "#281B17", "muted": "#756861",
+            "border": "#E9DED8", "border_strong": "#D4C2B8", "accent": "#A63D18",
+            "accent_hover": "#843013", "accent_text": "#FFFFFF", "soft": "#F9E8E0",
+            "hero": "#281711", "hero_accent": "#FF7A49",
+            "hero_text": "#FFF9F6", "hero_muted": "#D5C0B7",
+        },
+        "dark": {
+            "page": "#120D0B", "surface": "#1A1310", "raised": "#221915",
+            "sidebar": "#160F0D", "text": "#F7F1EE", "muted": "#B0A098",
+            "border": "#362821", "border_strong": "#4B382D", "accent": "#FF8A5B",
+            "accent_hover": "#FFA17C", "accent_text": "#321105", "soft": "#3A231A",
+            "hero": "#21130E", "hero_accent": "#FF8A5B",
+            "hero_text": "#FFF8F4", "hero_muted": "#CEB7AC",
+        },
+    },
+    "Ultraviolet": {
+        "swatches": ("#7C3AED", "#A855F7", "#22D3EE", "#160B2E", "#F5F0FF"),
+        "light": {
+            "page": "#F8F6FC", "surface": "#FFFFFF", "raised": "#FCFAFF",
+            "sidebar": "#F1EDF8", "text": "#211533", "muted": "#6E647C",
+            "border": "#E2DCEE", "border_strong": "#C9BDE0", "accent": "#6D28D9",
+            "accent_hover": "#5620AE", "accent_text": "#FFFFFF", "soft": "#EEE7FB",
+            "hero": "#1B0E36", "hero_accent": "#22D3EE",
+            "hero_text": "#FBF8FF", "hero_muted": "#C8B9DD",
+        },
+        "dark": {
+            "page": "#0C0815", "surface": "#130E21", "raised": "#1A132B",
+            "sidebar": "#100A1B", "text": "#F5F0FC", "muted": "#AAA0BA",
+            "border": "#2E2442", "border_strong": "#44345F", "accent": "#B58AFF",
+            "accent_hover": "#C5A5FF", "accent_text": "#21113F", "soft": "#2C2047",
+            "hero": "#170C2D", "hero_accent": "#22D3EE",
+            "hero_text": "#FAF7FF", "hero_muted": "#BEAFD3",
+        },
+    },
+    "Solar": {
+        "swatches": ("#F6C90E", "#FF8F00", "#3B2F00", "#FFF9E6", "#5A3D00"),
+        "light": {
+            "page": "#FAF9F4", "surface": "#FFFFFF", "raised": "#FDFCF9",
+            "sidebar": "#F5F2E8", "text": "#282310", "muted": "#746D55",
+            "border": "#E8E2CF", "border_strong": "#D1C6A6", "accent": "#7A5700",
+            "accent_hover": "#604500", "accent_text": "#FFFFFF", "soft": "#FAF0CF",
+            "hero": "#272008", "hero_accent": "#F6C90E",
+            "hero_text": "#FFFCED", "hero_muted": "#D5CDAE",
+        },
+        "dark": {
+            "page": "#111008", "surface": "#19170D", "raised": "#211E11",
+            "sidebar": "#151309", "text": "#F7F4E8", "muted": "#AEA994",
+            "border": "#34301C", "border_strong": "#494326", "accent": "#F6C90E",
+            "accent_hover": "#FFDA3D", "accent_text": "#282000", "soft": "#332D14",
+            "hero": "#201A07", "hero_accent": "#F6C90E",
+            "hero_text": "#FFFBE9", "hero_muted": "#CBC3A1",
+        },
+    },
+    "Ocean": {
+        "swatches": ("#00B8D9", "#0077B6", "#023047", "#90E0EF", "#CAF0F8"),
+        "light": {
+            "page": "#F4F9FA", "surface": "#FFFFFF", "raised": "#FAFDFD",
+            "sidebar": "#EDF5F7", "text": "#102A33", "muted": "#61757B",
+            "border": "#D7E7EA", "border_strong": "#BAD2D8", "accent": "#006B85",
+            "accent_hover": "#00546A", "accent_text": "#FFFFFF", "soft": "#E1F4F7",
+            "hero": "#082D3A", "hero_accent": "#4FD3E8",
+            "hero_text": "#F4FCFE", "hero_muted": "#B5CFD7",
+        },
+        "dark": {
+            "page": "#071116", "surface": "#0C1A20", "raised": "#11242B",
+            "sidebar": "#09161C", "text": "#EDF7F9", "muted": "#9DAEB3",
+            "border": "#25373D", "border_strong": "#35505A", "accent": "#55D1E5",
+            "accent_hover": "#76DCEB", "accent_text": "#08242B", "soft": "#17323A",
+            "hero": "#092630", "hero_accent": "#55D1E5",
+            "hero_text": "#F1FBFD", "hero_muted": "#AAC5CC",
+        },
+    },
+    "Monochrome": {
+        "swatches": ("#0A0A0A", "#4A4A4A", "#A0A0A0", "#E8E8E8", "#FFFFFF"),
+        "light": {
+            "page": "#F7F7F7", "surface": "#FFFFFF", "raised": "#FBFBFB",
+            "sidebar": "#F1F1F1", "text": "#171717", "muted": "#686868",
+            "border": "#E0E0E0", "border_strong": "#C7C7C7", "accent": "#252525",
+            "accent_hover": "#0F0F0F", "accent_text": "#FFFFFF", "soft": "#EAEAEA",
+            "hero": "#111111", "hero_accent": "#E8E8E8",
+            "hero_text": "#FAFAFA", "hero_muted": "#BEBEBE",
+        },
+        "dark": {
+            "page": "#0B0B0B", "surface": "#131313", "raised": "#1A1A1A",
+            "sidebar": "#0F0F0F", "text": "#F2F2F2", "muted": "#A6A6A6",
+            "border": "#2B2B2B", "border_strong": "#414141", "accent": "#F2F2F2",
+            "accent_hover": "#FFFFFF", "accent_text": "#111111", "soft": "#2D2D2D",
+            "hero": "#101010", "hero_accent": "#F2F2F2",
+            "hero_text": "#FAFAFA", "hero_muted": "#BDBDBD",
+        },
+    },
 }
 
 
@@ -317,15 +469,41 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
             color: {palette['accent']} !important;
             fill: {palette['accent']} !important;
         }}
-        div[data-baseweb="popover"],
-        div[data-baseweb="menu"],
-        ul[role="listbox"] {{
+        [data-baseweb="popover"],
+        [data-baseweb="popover"] > div,
+        [data-testid="stPopoverBody"],
+        [data-testid="stPopoverBody"] div,
+        [data-testid="stPopoverBody"] [data-testid="stVerticalBlock"],
+        [data-testid="stPopoverBody"] [data-testid="stMarkdownContainer"],
+        [data-baseweb="menu"],
+        [data-baseweb="menu"] > *,
+        [role="listbox"],
+        [role="listbox"] > * {{
             color: {palette['text']} !important;
-            background: {palette['raised']} !important;
+            background-color: {palette['raised']} !important;
         }}
-        li[role="option"] {{ color: {palette['text']} !important; }}
-        li[role="option"]:hover {{ background: {palette['soft']} !important; }}
-        li[role="option"][aria-selected="true"] {{ color: {palette['accent']} !important; background: {palette['soft']} !important; }}
+        [data-testid="stPopoverBody"] p,
+        [data-testid="stPopoverBody"] strong {{
+            color: {palette['text']} !important;
+        }}
+        [data-testid="stPopoverBody"] code {{
+            color: {palette['accent']} !important;
+            background-color: {palette['soft']} !important;
+        }}
+        [data-baseweb="menu"] *:not(svg),
+        [role="listbox"] *:not(svg),
+        [role="option"],
+        [role="option"] * {{ color: {palette['text']} !important; }}
+        [role="option"]:hover,
+        [role="option"]:hover * {{
+            color: {palette['accent']} !important;
+            background-color: {palette['soft']} !important;
+        }}
+        [role="option"][aria-selected="true"],
+        [role="option"][aria-selected="true"] * {{
+            color: {palette['accent']} !important;
+            background-color: {palette['soft']} !important;
+        }}
         [data-testid="stCheckbox"] [data-baseweb="checkbox"]:has(input:checked) > span {{
             border-color: {palette['accent']} !important;
             background-color: {palette['accent']} !important;
@@ -621,6 +799,9 @@ with st.container(key="generation_panel"):
                     **United Kingdom**
 
                     `+44 7700 900XXX`
+
+                    UK CVs use this reserved fictional mobile range only. Landline
+                    numbers are never generated.
 
                     Values are randomized within officially reserved fictional ranges.
                     """

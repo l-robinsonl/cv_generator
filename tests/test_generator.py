@@ -71,6 +71,13 @@ class GeneratorTests(unittest.TestCase):
             self.assertRegex(fictional_phone("UK"), r"^\+44 7700 900\d{3}$")
             self.assertRegex(fictional_phone("US"), r"^\+1 \d{3}-555-01\d{2}$")
 
+    def test_uk_phone_numbers_are_mobile_only_and_never_landlines(self):
+        phones = [fictional_phone("UK") for _ in range(200)]
+        self.assertTrue(all(phone.startswith("+44 7700 900") for phone in phones))
+        self.assertTrue(
+            all("01202" not in phone and "+44 1202" not in phone for phone in phones)
+        )
+
     def test_demo_phone_uses_chat_server_demo_range(self):
         for _ in range(100):
             self.assertRegex(demo_phone(), r"^\+210\d{9}$")
