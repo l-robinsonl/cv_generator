@@ -834,16 +834,11 @@ with st.container(key="generation_panel"):
                     """
                     **United States**
 
-                    `+1 202-555-01XX` (using supported area codes)
+                    `+1 202-555-01XX`
 
                     **United Kingdom**
 
                     `+44 7700 900XXX`
-
-                    UK CVs use this reserved fictional mobile range only. Landline
-                    numbers are never generated.
-
-                    Values are randomized within officially reserved fictional ranges.
                     """
                 )
 
