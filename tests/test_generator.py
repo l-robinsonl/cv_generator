@@ -10,7 +10,9 @@ from cv_generator.generator import (
     ResumeGenerator,
     build_prompt,
     create_plan,
+    demo_phone,
     fictional_phone,
+    is_demo_phone,
 )
 
 
@@ -69,6 +71,70 @@ class GeneratorTests(unittest.TestCase):
             self.assertRegex(fictional_phone("UK"), r"^\+44 7700 900\d{3}$")
             self.assertRegex(fictional_phone("US"), r"^\+1 \d{3}-555-01\d{2}$")
 
+    def test_demo_phone_uses_chat_server_demo_range(self):
+        for _ in range(100):
+            self.assertRegex(demo_phone(), r"^\+210\d{9}$")
+
+    def test_demo_phone_validation_is_strict(self):
+        self.assertTrue(is_demo_phone("+210000000000"))
+        self.assertFalse(is_demo_phone("+21000000000"))
+        self.assertFalse(is_demo_phone("+210 000000000"))
+        self.assertFalse(is_demo_phone("210000000000"))
+
+    def test_demo_mode_assigns_unique_demo_numbers_to_entire_batch(self):
+        plans = create_plan(
+            GenerationOptions(count=20, phone_number_mode="demo")
+        )
+        phones = [plan.phone for plan in plans]
+        self.assertEqual(len(set(phones)), 20)
+        self.assertTrue(all(re.fullmatch(r"\+210\d{9}", phone) for phone in phones))
+
+    def test_mixed_mode_assigns_exact_demo_count_and_local_remainder(self):
+        plans = create_plan(
+            GenerationOptions(
+                count=24,
+                countries=("UK",),
+                phone_number_mode="mixed",
+                demo_number_count=7,
+            )
+        )
+        demo_phones = [plan.phone for plan in plans if plan.phone.startswith("+210")]
+        local_phones = [plan.phone for plan in plans if not plan.phone.startswith("+210")]
+        self.assertEqual(len(demo_phones), 7)
+        self.assertEqual(len(local_phones), 17)
+        self.assertTrue(all(re.fullmatch(r"\+44 7700 900\d{3}", phone) for phone in local_phones))
+
+    def test_mixed_mode_rejects_demo_count_above_batch_size(self):
+        with self.assertRaisesRegex(ValueError, "between 0 and the batch size"):
+            create_plan(
+                GenerationOptions(
+                    count=3,
+                    phone_number_mode="mixed",
+                    demo_number_count=4,
+                )
+            )
+
+    def test_shared_demo_mode_assigns_the_same_number_to_every_cv(self):
+        shared_number = "+210123456789"
+        plans = create_plan(
+            GenerationOptions(
+                count=12,
+                phone_number_mode="shared_demo",
+                shared_demo_number=shared_number,
+            )
+        )
+        self.assertEqual({plan.phone for plan in plans}, {shared_number})
+
+    def test_shared_demo_mode_rejects_an_invalid_number(self):
+        with self.assertRaisesRegex(ValueError, "Shared demo number must be"):
+            create_plan(
+                GenerationOptions(
+                    count=2,
+                    phone_number_mode="shared_demo",
+                    shared_demo_number="+210123",
+                )
+            )
+
     def test_uk_prompt_is_explicitly_uk_only(self):
         plan = create_plan(
             GenerationOptions(count=1, countries=("UK",), industry_codes=(5,))
@@ -77,6 +143,7 @@ class GeneratorTests(unittest.TestCase):
         self.assertIn("UK-based", prompt)
         self.assertIn("United Kingdom", prompt)
         self.assertNotIn("US-based", prompt)
+        self.assertIn(f"Phone: {plan.phone}", prompt)
 
     def test_generation_uses_fixed_bounded_concurrency_and_totals_usage(self):
         client = FakeClient()

@@ -44,6 +44,15 @@ CAREER_PROGRESSIONS = (
 
 OUTPUT_FORMATS = ("pdf", "docx", "txt")
 
+PHONE_NUMBER_MODES = {
+    "local": "Country-reserved",
+    "demo": "Unique demo numbers",
+    "shared_demo": "One shared demo number",
+    "mixed": "Mixed batch",
+}
+DEMO_PHONE_PREFIX = "+210"
+DEMO_PHONE_SUFFIX_DIGITS = 9
+
 PROVIDERS = {
     "openai": {
         "label": "OpenAI",

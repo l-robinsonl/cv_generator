@@ -4,6 +4,7 @@ from concurrent.futures import CancelledError, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 import base64
 import random
+import re
 from typing import Callable, List, Optional, Sequence
 import uuid
 
@@ -11,12 +12,15 @@ from .api import AIClient, APIRequestError, CostBreakdown, TokenUsage, model_cos
 from .config import (
     CAREER_PROGRESSIONS,
     COUNTRIES,
+    DEMO_PHONE_PREFIX,
+    DEMO_PHONE_SUFFIX_DIGITS,
     EXPERIENCE_LEVELS,
     FIRST_NAMES,
     INDUSTRIES,
     LAST_NAMES,
     MAX_RESUMES,
     OUTPUT_FORMATS,
+    PHONE_NUMBER_MODES,
     PROVIDERS,
     WEB_CONCURRENCY,
 )
@@ -33,6 +37,7 @@ class ResumePlan:
     first_name: str
     last_name: str
     identifier: str
+    phone: str
 
 
 @dataclass(frozen=True)
@@ -55,6 +60,9 @@ class GenerationOptions:
     output_formats: Sequence[str] = OUTPUT_FORMATS
     distribute: bool = True
     flat: bool = False
+    phone_number_mode: str = "local"
+    demo_number_count: int = 0
+    shared_demo_number: Optional[str] = None
 
 
 @dataclass
@@ -73,6 +81,18 @@ def fictional_phone(country: str) -> str:
         return f"+44 7700 900{random.randint(0, 999):03d}"
     area_code = random.choice((202, 212, 213, 312, 415, 617, 646, 718))
     return f"+1 {area_code}-555-01{random.randint(0, 99):02d}"
+
+
+def demo_phone() -> str:
+    """Return a number recognized by the chat server's automated demo route."""
+    upper_bound = (10 ** DEMO_PHONE_SUFFIX_DIGITS) - 1
+    suffix = random.randint(0, upper_bound)
+    return f"{DEMO_PHONE_PREFIX}{suffix:0{DEMO_PHONE_SUFFIX_DIGITS}d}"
+
+
+def is_demo_phone(phone: str) -> bool:
+    """Return whether a number belongs to the chat server's demo route."""
+    return bool(re.fullmatch(r"\+210\d{9}", phone))
 
 
 def _balanced(values: Sequence, count: int) -> list:
@@ -112,6 +132,19 @@ def validate_options(options: GenerationOptions) -> None:
         raise ValueError("Unsupported career progression selected")
     if any(value not in OUTPUT_FORMATS for value in options.output_formats):
         raise ValueError("Unsupported output format selected")
+    if options.phone_number_mode not in PHONE_NUMBER_MODES:
+        raise ValueError("Select a supported phone-number mode")
+    if not 0 <= options.demo_number_count <= options.count:
+        raise ValueError(
+            f"Demo-number count must be between 0 and the batch size ({options.count})"
+        )
+    if options.phone_number_mode == "shared_demo" and not is_demo_phone(
+        options.shared_demo_number or ""
+    ):
+        raise ValueError(
+            "Shared demo number must be +210 followed by 9 digits "
+            "(for example, +210000000000)"
+        )
 
 
 def create_plan(options: GenerationOptions) -> List[ResumePlan]:
@@ -138,10 +171,35 @@ def create_plan(options: GenerationOptions) -> List[ResumePlan]:
     else:
         selected_names = [random.choice(name_pairs) for _ in range(count)]
 
+    if options.phone_number_mode == "demo":
+        demo_indexes = set(range(count))
+    elif options.phone_number_mode == "mixed":
+        demo_indexes = set(random.sample(range(count), options.demo_number_count))
+    else:
+        demo_indexes = set()
+
+    demo_phones = set()
+
+    def unique_demo_phone() -> str:
+        phone = demo_phone()
+        while phone in demo_phones:
+            phone = demo_phone()
+        demo_phones.add(phone)
+        return phone
+
     plans = []
     for index in range(count):
         identifier = base64.urlsafe_b64encode(uuid.uuid4().bytes).rstrip(b"=").decode()
         first_name, last_name = selected_names[index]
+        phone = (
+            options.shared_demo_number or ""
+            if options.phone_number_mode == "shared_demo"
+            else (
+                unique_demo_phone()
+                if index in demo_indexes
+                else fictional_phone(countries[index])
+            )
+        )
         plans.append(
             ResumePlan(
                 country=countries[index],
@@ -152,6 +210,7 @@ def create_plan(options: GenerationOptions) -> List[ResumePlan]:
                 first_name=first_name,
                 last_name=last_name,
                 identifier=identifier,
+                phone=phone,
             )
         )
     return plans
@@ -159,7 +218,6 @@ def create_plan(options: GenerationOptions) -> List[ResumePlan]:
 
 def build_prompt(plan: ResumePlan) -> str:
     country = COUNTRIES[plan.country]
-    phone = fictional_phone(plan.country)
     return f"""Generate a synthetic CV in English for a {country['candidate']} candidate.
 The CV must be realistic, logically consistent, and professionally formatted as Markdown.
 Return only the CV, with no commentary or code fence.
@@ -168,7 +226,7 @@ Personal information
 - Full name: {plan.first_name} {plan.last_name}
 - Email: testcandidate+{plan.identifier}@daxtra.com
 - Location format: {country['location']} (use a real, geographically accurate location)
-- Phone: {phone}
+- Phone: {plan.phone}
 
 Required sections
 # {plan.first_name} {plan.last_name}
