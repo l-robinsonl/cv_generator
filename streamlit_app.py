@@ -11,6 +11,7 @@ from cv_generator.config import (
     EXPERIENCE_LEVELS,
     INDUSTRIES,
     MAX_RESUMES,
+    MAX_WEB_CONCURRENCY,
     OUTPUT_FORMATS,
     PHONE_NUMBER_MODES,
     PROVIDERS,
@@ -20,7 +21,6 @@ from cv_generator.generator import (
     GenerationOptions,
     GenerationResult,
     ResumeGenerator,
-    is_demo_phone,
 )
 
 
@@ -36,69 +36,77 @@ THEMES = {
     "Mint": {
         "swatches": ("#56E39F", "#59C9A5", "#5B6C5D", "#3B2C35", "#2A1F2D"),
         "light": {
-            "page": "#F1F6F3", "surface": "#FCFEFD", "raised": "#FFFFFF",
-            "sidebar": "#E5EFE9", "text": "#2A1F2D", "muted": "#5B6C5D",
-            "border": "rgba(42,31,45,.14)", "accent": "#1B7257",
-            "accent_2": "#315F51", "bright": "#56E39F", "soft": "rgba(89,201,165,.14)",
-            "hero_a": "#2A1F2D", "hero_b": "#40594B", "button_text": "#FFFFFF",
+            "page": "#F6F8F7", "surface": "#FFFFFF", "raised": "#FBFCFB",
+            "sidebar": "#F1F4F2", "text": "#17211C", "muted": "#66736C",
+            "border": "#DDE4E0", "border_strong": "#C5D0CA", "accent": "#2D6F57",
+            "accent_hover": "#245B48", "accent_text": "#FFFFFF", "soft": "#E4F0EB",
+            "hero": "#1E2924", "hero_accent": "#59C9A5",
+            "hero_text": "#F8FBF9", "hero_muted": "#C2CEC8",
         },
         "dark": {
-            "page": "#171218", "surface": "#211922", "raised": "#2A1F2D",
-            "sidebar": "#1B151C", "text": "#F3F8F5", "muted": "#A6B8AD",
-            "border": "rgba(86,227,159,.18)", "accent": "#56E39F",
-            "accent_2": "#59C9A5", "bright": "#56E39F", "soft": "rgba(86,227,159,.12)",
-            "hero_a": "#2A1F2D", "hero_b": "#3B2C35", "button_text": "#16251D",
+            "page": "#101412", "surface": "#171C19", "raised": "#1C231F",
+            "sidebar": "#121714", "text": "#EEF3F0", "muted": "#9DA9A2",
+            "border": "#2A342E", "border_strong": "#3A483F", "accent": "#67C6A2",
+            "accent_hover": "#7AD3B2", "accent_text": "#10241C", "soft": "#20362D",
+            "hero": "#1A221E", "hero_accent": "#67C6A2",
+            "hero_text": "#F4F8F6", "hero_muted": "#AEBDB5",
         },
     },
     "Petal": {
         "swatches": ("#E1D89F", "#CD8B76", "#C45BAA", "#7D387D", "#27474E"),
         "light": {
-            "page": "#FBF8F0", "surface": "#FFFEFB", "raised": "#FFFFFF",
-            "sidebar": "#F0E9D1", "text": "#27474E", "muted": "#71645F",
-            "border": "rgba(39,71,78,.15)", "accent": "#913E82",
-            "accent_2": "#7D387D", "bright": "#E1D89F", "soft": "rgba(196,91,170,.12)",
-            "hero_a": "#27474E", "hero_b": "#7D387D", "button_text": "#FFFFFF",
+            "page": "#F8F7F6", "surface": "#FFFFFF", "raised": "#FCFBFB",
+            "sidebar": "#F3F1F0", "text": "#251F23", "muted": "#70676D",
+            "border": "#E5E0E3", "border_strong": "#CFC5CB", "accent": "#7A3D74",
+            "accent_hover": "#63315E", "accent_text": "#FFFFFF", "soft": "#F1E8EF",
+            "hero": "#29252A", "hero_accent": "#CD8B76",
+            "hero_text": "#FCFAFB", "hero_muted": "#CDC5CA",
         },
         "dark": {
-            "page": "#181316", "surface": "#241B23", "raised": "#30222E",
-            "sidebar": "#20171F", "text": "#FBF8F0", "muted": "#D0C3BD",
-            "border": "rgba(225,216,159,.18)", "accent": "#E58CCE",
-            "accent_2": "#CD8B76", "bright": "#E1D89F", "soft": "rgba(196,91,170,.14)",
-            "hero_a": "#27474E", "hero_b": "#7D387D", "button_text": "#271523",
+            "page": "#141214", "surface": "#1B181A", "raised": "#221E21",
+            "sidebar": "#171416", "text": "#F3EFF1", "muted": "#AAA0A6",
+            "border": "#332D31", "border_strong": "#473C43", "accent": "#D694C9",
+            "accent_hover": "#E3A8D8", "accent_text": "#291424", "soft": "#382633",
+            "hero": "#211D21", "hero_accent": "#D4A28A",
+            "hero_text": "#FAF7F9", "hero_muted": "#BFB4BB",
         },
     },
     "Electric": {
         "swatches": ("#0B3C49", "#731963", "#FFFDFD", "#CBD2D0", "#F0E100"),
         "light": {
-            "page": "#F4F7F6", "surface": "#FFFDFD", "raised": "#FFFFFF",
-            "sidebar": "#E7ECEB", "text": "#0B3C49", "muted": "#526467",
-            "border": "rgba(11,60,73,.16)", "accent": "#651657",
-            "accent_2": "#0B3C49", "bright": "#F0E100", "soft": "rgba(240,225,0,.16)",
-            "hero_a": "#0B3C49", "hero_b": "#731963", "button_text": "#FFFFFF",
+            "page": "#F5F7F7", "surface": "#FFFFFF", "raised": "#FBFCFC",
+            "sidebar": "#EFF2F2", "text": "#14272C", "muted": "#65757A",
+            "border": "#DCE4E6", "border_strong": "#C2D0D3", "accent": "#146074",
+            "accent_hover": "#0B4A59", "accent_text": "#FFFFFF", "soft": "#E2EEF1",
+            "hero": "#152C33", "hero_accent": "#D5CA16",
+            "hero_text": "#F8FBFC", "hero_muted": "#B8C8CC",
         },
         "dark": {
-            "page": "#071F26", "surface": "#0B303A", "raised": "#123D47",
-            "sidebar": "#092932", "text": "#FFFDFD", "muted": "#CBD2D0",
-            "border": "rgba(240,225,0,.18)", "accent": "#F0E100",
-            "accent_2": "#D2C600", "bright": "#F0E100", "soft": "rgba(240,225,0,.11)",
-            "hero_a": "#501147", "hero_b": "#0B3C49", "button_text": "#0B3038",
+            "page": "#0F1416", "surface": "#151B1E", "raised": "#1B2327",
+            "sidebar": "#11171A", "text": "#F0F4F4", "muted": "#9EAAAD",
+            "border": "#2A363B", "border_strong": "#3B4A50", "accent": "#69BDD0",
+            "accent_hover": "#83CBDB", "accent_text": "#0D252C", "soft": "#1D3339",
+            "hero": "#14262C", "hero_accent": "#DDD438",
+            "hero_text": "#F5F9FA", "hero_muted": "#AABCC1",
         },
     },
     "Aurora": {
         "swatches": ("#2E0219", "#4A001F", "#6A0F49", "#A7C4C2", "#97EEE9"),
         "light": {
-            "page": "#F2F8F8", "surface": "#FCFFFF", "raised": "#FFFFFF",
-            "sidebar": "#DFECEB", "text": "#2E0219", "muted": "#526C6A",
-            "border": "rgba(46,2,25,.14)", "accent": "#6A0F49",
-            "accent_2": "#315F5D", "bright": "#97EEE9", "soft": "rgba(151,238,233,.20)",
-            "hero_a": "#2E0219", "hero_b": "#6A0F49", "button_text": "#FFFFFF",
+            "page": "#F6F8F8", "surface": "#FFFFFF", "raised": "#FBFCFC",
+            "sidebar": "#F0F3F3", "text": "#20181C", "muted": "#687475",
+            "border": "#DDE4E4", "border_strong": "#C3D0D0", "accent": "#256A68",
+            "accent_hover": "#1C5755", "accent_text": "#FFFFFF", "soft": "#E1F0EF",
+            "hero": "#25151E", "hero_accent": "#78D9D4",
+            "hero_text": "#FCF9FB", "hero_muted": "#CCBFC6",
         },
         "dark": {
-            "page": "#18010D", "surface": "#250217", "raised": "#2E0219",
-            "sidebar": "#200111", "text": "#F5FAF9", "muted": "#A7C4C2",
-            "border": "rgba(151,238,233,.18)", "accent": "#97EEE9",
-            "accent_2": "#62C6C2", "bright": "#97EEE9", "soft": "rgba(151,238,233,.12)",
-            "hero_a": "#4A001F", "hero_b": "#6A0F49", "button_text": "#210312",
+            "page": "#121315", "surface": "#181B1D", "raised": "#1E2325",
+            "sidebar": "#151719", "text": "#F1F4F4", "muted": "#A1ABAB",
+            "border": "#2E3638", "border_strong": "#424D4F", "accent": "#7BCFCC",
+            "accent_hover": "#96DDDA", "accent_text": "#102524", "soft": "#203737",
+            "hero": "#22151C", "hero_accent": "#7DDBD7",
+            "hero_text": "#FAF7F9", "hero_muted": "#C2B7BD",
         },
     },
 }
@@ -108,20 +116,26 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
     """Apply one of the app's accessible light/dark palette pairs."""
     palette = THEMES[theme_name]["dark" if dark_mode else "light"]
     color_scheme = "dark" if dark_mode else "light"
-    shadow = "rgba(8,3,8,.34)" if dark_mode else "rgba(42,31,45,.10)"
+    shadow = "rgba(0,0,0,.20)" if dark_mode else "rgba(23,33,28,.07)"
     st.markdown(
         f"""
         <style>
-        :root {{ color-scheme: {color_scheme}; }}
-        .stApp {{ font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
-        .stApp {{
-            color: {palette['text']};
-            background:
-                radial-gradient(circle at 86% 2%, {palette['soft']} 0, transparent 28rem),
-                radial-gradient(circle at 8% 52%, {palette['soft']} 0, transparent 34rem),
-                {palette['page']};
+        :root {{
+            color-scheme: {color_scheme};
+            --primary-color: {palette['accent']};
         }}
-        [data-testid="stHeader"] {{ background: transparent; }}
+        .stApp {{
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: {palette['text']};
+            background: {palette['page']};
+        }}
+        [data-testid="stMainBlockContainer"], .main .block-container {{
+            width: 100%;
+            max-width: 1480px;
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }}
+        [data-testid="stHeader"] {{ background: {palette['page']}; }}
         [data-testid="stToolbar"] {{ color: {palette['text']}; }}
         [data-testid="stSidebar"] {{
             background: {palette['sidebar']};
@@ -140,98 +154,78 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
             position: relative;
             overflow: hidden;
             display: grid;
-            grid-template-columns: minmax(0, 1.55fr) minmax(240px, .7fr);
-            gap: clamp(1.5rem, 4vw, 4rem);
-            align-items: end;
-            padding: clamp(1.7rem, 4vw, 3.4rem);
-            margin: 0.35rem 0 1.35rem;
-            border: 1px solid rgba(255,255,255,.10);
-            border-radius: 30px;
-            background: linear-gradient(135deg, {palette['hero_a']} 0%, {palette['hero_b']} 100%);
-            box-shadow: 0 26px 74px {shadow};
+            grid-template-columns: minmax(0, 1fr);
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: center;
+            padding: clamp(2rem, 4vw, 3rem);
+            margin: 0 0 1.75rem;
+            border: 1px solid {palette['border_strong']};
+            border-radius: 20px;
+            background: {palette['hero']};
+            box-shadow: 0 14px 34px {shadow};
         }}
         .hero-shell::before {{
             content: "";
             position: absolute;
-            width: 24rem;
-            height: 24rem;
-            right: -9rem;
-            top: -12rem;
-            border-radius: 50%;
-            background: {palette['bright']};
-            opacity: .14;
-            filter: blur(1px);
+            inset: 0 0 auto;
+            height: 3px;
+            background: {palette['hero_accent']};
             pointer-events: none;
         }}
-        .hero-content {{ position: relative; z-index: 1; max-width: 720px; }}
+        .hero-content {{ position: relative; z-index: 1; max-width: 680px; }}
         .eyebrow {{
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            color: {palette['bright']};
-            font-size: 0.76rem;
+            color: {palette['hero_accent']};
+            font-size: 0.72rem;
             font-weight: 800;
-            letter-spacing: 0.13em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
         }}
         .eyebrow-dot {{
-            width: 0.55rem;
-            height: 0.55rem;
+            width: 0.48rem;
+            height: 0.48rem;
             border-radius: 50%;
-            background: {palette['bright']};
-            box-shadow: 0 0 0 5px rgba(255,255,255,.10);
+            background: {palette['hero_accent']};
         }}
         .hero-title {{
-            max-width: 700px;
-            margin: 1rem 0 0.8rem;
-            color: #FFFFFF;
-            font-size: clamp(2.35rem, 5vw, 4.7rem);
-            font-weight: 790;
-            line-height: .96;
-            letter-spacing: -0.055em;
+            max-width: 620px;
+            margin: 0.85rem 0 0.75rem;
+            color: {palette['hero_text']};
+            font-size: clamp(2.2rem, 4vw, 3.65rem);
+            font-weight: 760;
+            line-height: 1.02;
+            letter-spacing: -0.045em;
         }}
         .hero-copy {{
-            max-width: 650px;
+            max-width: 620px;
             margin: 0;
-            color: rgba(255,255,255,.78);
-            font-size: 1.04rem;
-            line-height: 1.65;
+            color: {palette['hero_muted']};
+            font-size: 1rem;
+            line-height: 1.6;
         }}
-        .hero-meta {{ display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1.35rem; }}
+        .hero-meta {{ display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }}
         .hero-pill {{
             display: inline-flex;
-            padding: 0.42rem 0.72rem;
-            border: 1px solid rgba(255,255,255,.14);
+            padding: 0.38rem 0.65rem;
+            border: 1px solid {palette['border_strong']};
             border-radius: 999px;
-            color: rgba(255,255,255,.84);
-            background: rgba(255,255,255,.07);
-            font-size: 0.8rem;
-            font-weight: 650;
+            color: {palette['hero_muted']};
+            background: transparent;
+            font-size: 0.76rem;
+            font-weight: 600;
         }}
-        .route-card {{
-            position: relative;
-            z-index: 1;
-            padding: 1.15rem;
-            border: 1px solid rgba(255,255,255,.16);
-            border-radius: 19px;
-            background: rgba(255,255,255,.09);
-            backdrop-filter: blur(10px);
-        }}
-        .route-label {{ color: rgba(255,255,255,.58); font-size: .72rem; font-weight: 750; letter-spacing: .11em; text-transform: uppercase; }}
-        .route-number {{ margin: .55rem 0 1rem; color: #FFFFFF; font-size: 1.15rem; font-weight: 750; letter-spacing: .02em; }}
-        .route-status {{ display: flex; align-items: center; gap: .5rem; color: rgba(255,255,255,.78); font-size: .8rem; }}
-        .status-light {{ width: .55rem; height: .55rem; border-radius: 50%; background: {palette['bright']}; box-shadow: 0 0 0 4px rgba(255,255,255,.09); }}
         .side-brand {{ display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.1rem; }}
         .brand-mark {{
             display: grid;
-            width: 2.6rem;
-            height: 2.6rem;
+            width: 2.45rem;
+            height: 2.45rem;
             place-items: center;
-            border-radius: 13px;
-            color: {palette['button_text']};
-            background: linear-gradient(145deg, {palette['accent']}, {palette['accent_2']});
-            box-shadow: 0 8px 20px {shadow};
-            font-weight: 850;
+            border-radius: 10px;
+            color: {palette['accent_text']};
+            background: {palette['accent']};
+            font-weight: 800;
             letter-spacing: -0.04em;
         }}
         .brand-name {{ color: {palette['text']}; font-weight: 780; line-height: 1.1; }}
@@ -244,27 +238,60 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
             text-transform: uppercase;
             margin-bottom: -0.6rem;
         }}
-        .palette-swatches {{ display: grid; grid-template-columns: repeat(5, 1fr); height: .42rem; overflow: hidden; border-radius: 99px; margin: -.4rem 0 .75rem; }}
-        .st-key-generation_panel {{
-            padding: clamp(1.15rem, 3vw, 2rem);
+        .palette-swatches {{ display: grid; grid-template-columns: repeat(5, 1fr); height: .25rem; overflow: hidden; border-radius: 99px; margin: -.35rem 0 .8rem; opacity: .72; }}
+        .side-note {{
+            margin-top: 1rem;
+            padding: .85rem .9rem;
             border: 1px solid {palette['border']};
-            border-radius: 22px;
+            border-radius: 10px;
+            color: {palette['muted']};
             background: {palette['surface']};
-            box-shadow: 0 18px 50px {shadow};
+            font-size: .78rem;
+            line-height: 1.55;
         }}
-        .st-key-phone_mode [role="radiogroup"] {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: .65rem; }}
-        .st-key-phone_mode [role="radiogroup"] label {{
-            min-height: 3.1rem;
-            margin: 0;
-            padding: .75rem .85rem;
+        .st-key-generation_panel {{
+            padding: clamp(1.2rem, 2.5vw, 1.75rem);
             border: 1px solid {palette['border']};
-            border-radius: 13px;
+            border-radius: 16px;
+            background: {palette['surface']};
+            box-shadow: 0 10px 28px {shadow};
+        }}
+        .st-key-phone_mode [role="radiogroup"] {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; }}
+        .st-key-phone_mode [data-baseweb="radio"] {{
+            min-height: 4.6rem;
+            margin: 0;
+            padding: .68rem .8rem;
+            border: 1px solid {palette['border']};
+            border-radius: 10px;
             background: {palette['raised']};
         }}
-        .st-key-phone_mode [role="radiogroup"] label:has(input:checked) {{
+        .st-key-phone_mode [data-baseweb="radio"]:has(input:checked) {{
             border-color: {palette['accent']};
             background: {palette['soft']};
-            box-shadow: inset 0 0 0 1px {palette['accent']};
+            box-shadow: none;
+        }}
+        .st-key-remainder_panel {{
+            margin-top: .35rem;
+            padding: 1rem 1.1rem;
+            border: 1px solid {palette['border']};
+            border-radius: 12px;
+            background: {palette['raised']};
+        }}
+        .st-key-remainder_mode [role="radiogroup"] {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: .65rem; }}
+        .st-key-remainder_mode [data-baseweb="radio"] {{
+            min-height: 4.2rem;
+            margin: 0;
+            padding: .65rem .75rem;
+            border: 1px solid {palette['border']};
+            border-radius: 10px;
+            background: {palette['surface']};
+        }}
+        .st-key-remainder_mode [data-baseweb="radio"]:has(input:checked) {{
+            border-color: {palette['accent']};
+            background: {palette['soft']};
+        }}
+        [data-testid="stRadio"] [data-baseweb="radio"]:has(input:checked) > div:first-of-type {{
+            background-color: {palette['accent']} !important;
         }}
         div[data-baseweb="select"] > div,
         div[data-baseweb="input"] > div,
@@ -274,9 +301,21 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
             background: {palette['raised']} !important;
             border-color: {palette['border']} !important;
         }}
-        div[data-baseweb="tag"] {{
-            color: {palette['text']} !important;
+        div[data-baseweb="select"]:focus-within > div,
+        div[data-baseweb="input"]:focus-within > div,
+        [data-testid="stNumberInput"]:focus-within,
+        [data-testid="stTextInput"]:focus-within {{
+            border-color: {palette['accent']} !important;
+            box-shadow: 0 0 0 2px {palette['soft']} !important;
+        }}
+        [data-baseweb="tag"] {{
+            color: {palette['accent']} !important;
             background: {palette['soft']} !important;
+            border: 1px solid {palette['border']} !important;
+        }}
+        [data-baseweb="tag"] * {{
+            color: {palette['accent']} !important;
+            fill: {palette['accent']} !important;
         }}
         div[data-baseweb="popover"],
         div[data-baseweb="menu"],
@@ -286,43 +325,76 @@ def apply_theme(theme_name: str, dark_mode: bool) -> None:
         }}
         li[role="option"] {{ color: {palette['text']} !important; }}
         li[role="option"]:hover {{ background: {palette['soft']} !important; }}
-        [data-testid="stCheckbox"] svg,
-        [data-testid="stToggle"] svg {{ color: {palette['accent']} !important; }}
+        li[role="option"][aria-selected="true"] {{ color: {palette['accent']} !important; background: {palette['soft']} !important; }}
+        [data-testid="stCheckbox"] [data-baseweb="checkbox"]:has(input:checked) > span {{
+            border-color: {palette['accent']} !important;
+            background-color: {palette['accent']} !important;
+        }}
+        [data-testid="stToggle"] [data-baseweb="checkbox"]:has(input:checked) > div:first-of-type {{
+            background-color: {palette['accent']} !important;
+        }}
+        [data-testid="stToggle"] [data-baseweb="checkbox"]:has(input:checked) > div:first-of-type > div {{
+            background-color: {palette['accent_text']} !important;
+        }}
+        [data-baseweb="progress-bar"] > div > div > div {{
+            background-color: {palette['accent']} !important;
+        }}
+        [data-testid="stSpinner"] svg {{
+            color: {palette['accent']} !important;
+            fill: {palette['accent']} !important;
+        }}
+        [data-testid="stPopover"] button {{
+            min-height: 2.35rem;
+            border-color: {palette['border']} !important;
+            color: {palette['text']} !important;
+            background: {palette['raised']} !important;
+        }}
+        [data-testid="stPopover"] button:hover {{
+            border-color: {palette['accent']} !important;
+            color: {palette['accent']} !important;
+        }}
         [data-testid="stButton"] button,
         [data-testid="stDownloadButton"] button {{
             min-height: 3rem;
             border: 0;
-            border-radius: 13px;
-            color: {palette['button_text']} !important;
-            background: linear-gradient(120deg, {palette['accent']}, {palette['accent_2']});
-            box-shadow: 0 10px 24px {shadow};
-            font-weight: 760;
-            transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+            border-radius: 10px;
+            color: {palette['accent_text']} !important;
+            background: {palette['accent']} !important;
+            box-shadow: none;
+            font-weight: 700;
+            transition: background 150ms ease, transform 150ms ease;
+        }}
+        [data-testid="stButton"] button *,
+        [data-testid="stDownloadButton"] button * {{
+            color: {palette['accent_text']} !important;
         }}
         [data-testid="stButton"] button:hover,
         [data-testid="stDownloadButton"] button:hover {{
-            filter: brightness(1.06);
+            background: {palette['accent_hover']} !important;
             transform: translateY(-1px);
-            box-shadow: 0 14px 30px {shadow};
         }}
         [data-testid="stMetric"] {{
             padding: 1rem;
             border: 1px solid {palette['border']};
-            border-radius: 16px;
+            border-radius: 12px;
             background: {palette['surface']};
         }}
         [data-testid="stExpander"], [data-testid="stAlert"] {{
             border-color: {palette['border']};
-            border-radius: 14px;
+            border-radius: 10px;
         }}
         hr {{ border-color: {palette['border']} !important; }}
         .stCaption, [data-testid="stCaptionContainer"], small {{ color: {palette['muted']} !important; }}
-        @media (max-width: 640px) {{
-            .hero-shell {{ grid-template-columns: 1fr; border-radius: 20px; padding: 1.4rem; }}
-            .hero-title {{ font-size: 2.35rem; }}
-            .route-card {{ display: none; }}
-            .st-key-generation_panel {{ border-radius: 18px; padding: 1rem; }}
+        @media (max-width: 900px) {{
             .st-key-phone_mode [role="radiogroup"] {{ grid-template-columns: 1fr; }}
+        }}
+        @media (max-width: 640px) {{
+            [data-testid="stMainBlockContainer"], .main .block-container {{ padding-top: 1rem; }}
+            .hero-shell {{ border-radius: 14px; padding: 1.4rem; }}
+            .hero-title {{ font-size: 2.2rem; }}
+            .st-key-generation_panel {{ border-radius: 12px; padding: 1rem; }}
+            .st-key-phone_mode [role="radiogroup"] {{ grid-template-columns: 1fr; }}
+            .st-key-remainder_mode [role="radiogroup"] {{ grid-template-columns: 1fr; }}
         }}
         </style>
         """,
@@ -387,21 +459,15 @@ st.markdown(
     """
     <div class="hero-shell">
         <div class="hero-content">
-            <div class="eyebrow"><span class="eyebrow-dot"></span> Synthetic candidate studio</div>
-            <div class="hero-title">Test people.<br>Real conversations.</div>
-            <p class="hero-copy">Build credible US and UK candidate profiles in batches,
-            route selected profiles through automated demo conversations, and export polished
-            files—without storing your key or generated documents.</p>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Candidate data studio</div>
+            <div class="hero-title">Synthetic CVs for serious testing.</div>
+            <p class="hero-copy">Create credible US and UK profiles in batches, route selected
+            candidates through automated demo conversations, and export production-ready files.</p>
             <div class="hero-meta">
                 <span class="hero-pill">US + UK</span>
                 <span class="hero-pill">Demo-ready +210</span>
                 <span class="hero-pill">PDF · DOCX · TXT</span>
             </div>
-        </div>
-        <div class="route-card">
-            <div class="route-label">Demo route</div>
-            <div class="route-number">+210000000000</div>
-            <div class="route-status"><span class="status-light"></span> Auto-response ready</div>
         </div>
     </div>
     """,
@@ -417,14 +483,18 @@ with st.sidebar:
         2. Select countries, phone routing, profile mix, and formats.
         3. Generate and download the result.
 
-        The app uses **{WEB_CONCURRENCY} concurrent requests per session**. API keys
-        are sent only to the selected provider and are not written to files, logs,
-        caches, or the repository.
+        You can run **1–{MAX_WEB_CONCURRENCY} concurrent requests**. The default is
+        **{WEB_CONCURRENCY}**. API keys are sent only to the selected provider and are
+        not written to files, logs, caches, or the repository.
         """
     )
-    st.warning(
-        "Synthetic employment and education histories may mention real organizations. "
-        "Use generated CVs only for testing, demos, or other legitimate purposes."
+    st.markdown(
+        """
+        <div class="side-note"><strong>Use responsibly.</strong><br>
+        Synthetic histories may mention real organisations. Generated CVs are for testing,
+        demos, and other legitimate uses only.</div>
+        """,
+        unsafe_allow_html=True,
     )
 
 st.markdown('<div class="section-kicker">Generation studio</div>', unsafe_allow_html=True)
@@ -452,12 +522,40 @@ with st.container(key="generation_panel"):
             help="Cost is calculated only for models with verified pricing.",
         )
 
-    count = st.number_input(
-        "Number of CVs",
-        min_value=1,
-        max_value=MAX_RESUMES,
-        value=10,
-        step=1,
+    batch_left, batch_right = st.columns(2)
+    with batch_left:
+        count = st.number_input(
+            "Number of CVs",
+            min_value=1,
+            max_value=MAX_RESUMES,
+            value=10,
+            step=1,
+        )
+    with batch_right:
+        concurrency = st.number_input(
+            "Concurrent requests",
+            min_value=1,
+            max_value=MAX_WEB_CONCURRENCY,
+            value=WEB_CONCURRENCY,
+            step=1,
+            help=(
+                "Higher values can finish batches faster, but provider rate limits may "
+                "cause requests to fail."
+            ),
+        )
+    if concurrency > 10:
+        st.warning(
+            "High concurrency may trigger provider rate limits. If requests fail, reduce "
+            "this value and try again."
+        )
+
+    st.markdown("#### Candidate countries")
+    countries = st.multiselect(
+        "Countries",
+        options=list(COUNTRIES),
+        default=["US"],
+        format_func=lambda value: f"{value} — {COUNTRIES[value]['label']}",
+        label_visibility="collapsed",
     )
 
     st.markdown("#### Phone routing")
@@ -465,61 +563,72 @@ with st.container(key="generation_panel"):
         "Number source",
         options=list(PHONE_NUMBER_MODES),
         format_func=lambda value: PHONE_NUMBER_MODES[value],
+        captions=(
+            "Reserved fictional range matched to each CV country.",
+            "Every CV gets a different +210 auto-response number.",
+            "Choose an exact demo count and how to number the remainder.",
+        ),
         horizontal=True,
         key="phone_mode",
         label_visibility="collapsed",
     )
-    phone_mode_copy = {
-        "local": (
-            "Every profile gets a fictional number reserved for its selected country. "
-            "These are safe for display but are not messageable."
-        ),
-        "demo": (
-            "Every profile gets its own unique **+210** number recognized by the chat server, "
-            "so all generated conversations can auto-respond."
-        ),
-        "shared_demo": (
-            "Every profile gets the same **+210** demo number that you provide. "
-            "Use this when an entire batch should route to one shared conversation identity."
-        ),
-        "mixed": (
-            "A fixed number of randomly selected profiles get unique **+210** demo numbers; "
-            "the remainder use country-reserved numbers."
-        ),
-    }
-    st.caption(phone_mode_copy[phone_number_mode])
-    shared_demo_number = None
+    reserved_phone_country = None
     if phone_number_mode == "mixed":
-        demo_number_count = st.number_input(
-            "Number of demo-ready CVs",
-            min_value=1,
-            max_value=MAX_RESUMES,
-            value=min(3, int(count)),
-            step=1,
-            help="Must not exceed the total batch size. Assignment is random within the batch.",
-        )
-        if demo_number_count > count:
-            st.warning(f"Choose {int(count)} or fewer demo-ready CVs for this batch.")
-    elif phone_number_mode == "shared_demo":
-        shared_demo_number = st.text_input(
-            "Shared demo number",
-            placeholder="+210000000000",
-            help="Must be +210 followed by exactly 9 digits.",
-        ).strip()
-        if shared_demo_number and not is_demo_phone(shared_demo_number):
-            st.error("Must be +210 followed by 9 digits (for example, +210000000000).")
-        demo_number_count = 0
+        with st.container(key="remainder_panel"):
+            demo_limit = max(1, int(count) - 1)
+            demo_number_count = st.number_input(
+                "Number of unique demo numbers",
+                min_value=1,
+                max_value=demo_limit,
+                value=min(3, demo_limit),
+                step=1,
+                help="These are assigned randomly within the batch; each one is unique.",
+            )
+            if count == 1:
+                st.warning("Increase the batch size to at least 2 to use a fixed allocation.")
+            remainder_mode = st.radio(
+                "Country-reserved remainder",
+                options=("selected", "single"),
+                format_func=lambda value: {
+                    "selected": "Selected-country mix",
+                    "single": "One reserved country",
+                }[value],
+                captions=(
+                    "Each remaining number matches its CV's assigned country.",
+                    "Every remaining number comes from one country you choose.",
+                ),
+                horizontal=True,
+                key="remainder_mode",
+                label_visibility="visible",
+            )
+            if remainder_mode == "single":
+                reserved_phone_country = st.selectbox(
+                    "Reserved-number country",
+                    options=list(countries) or list(COUNTRIES),
+                    format_func=lambda value: COUNTRIES[value]["label"],
+                    help="Only the phone-number range is fixed; CV locations still follow the profile mix.",
+                )
     else:
         demo_number_count = 0
+        if phone_number_mode == "local":
+            with st.popover("ⓘ Number examples"):
+                st.markdown(
+                    """
+                    **United States**
 
+                    `+1 202-555-01XX` (using supported area codes)
+
+                    **United Kingdom**
+
+                    `+44 7700 900XXX`
+
+                    Values are randomized within officially reserved fictional ranges.
+                    """
+                )
+
+    st.markdown("#### Profile details")
     selection_left, selection_right = st.columns(2)
     with selection_left:
-        countries = st.multiselect(
-            "Countries",
-            options=list(COUNTRIES),
-            default=["US"],
-            format_func=lambda value: f"{value} — {COUNTRIES[value]['label']}",
-        )
         industry_codes = st.multiselect(
             "Industries",
             options=list(INDUSTRIES),
@@ -583,7 +692,8 @@ if submitted:
         flat=flat,
         phone_number_mode=phone_number_mode,
         demo_number_count=int(demo_number_count),
-        shared_demo_number=shared_demo_number,
+        reserved_phone_country=reserved_phone_country,
+        concurrency=int(concurrency),
     )
     progress_bar = st.progress(0, text="Preparing generation plan…")
 

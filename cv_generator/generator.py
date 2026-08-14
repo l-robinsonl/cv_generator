@@ -19,6 +19,7 @@ from .config import (
     INDUSTRIES,
     LAST_NAMES,
     MAX_RESUMES,
+    MAX_WEB_CONCURRENCY,
     OUTPUT_FORMATS,
     PHONE_NUMBER_MODES,
     PROVIDERS,
@@ -62,7 +63,8 @@ class GenerationOptions:
     flat: bool = False
     phone_number_mode: str = "local"
     demo_number_count: int = 0
-    shared_demo_number: Optional[str] = None
+    reserved_phone_country: Optional[str] = None
+    concurrency: int = WEB_CONCURRENCY
 
 
 @dataclass
@@ -134,16 +136,22 @@ def validate_options(options: GenerationOptions) -> None:
         raise ValueError("Unsupported output format selected")
     if options.phone_number_mode not in PHONE_NUMBER_MODES:
         raise ValueError("Select a supported phone-number mode")
-    if not 0 <= options.demo_number_count <= options.count:
+    if options.phone_number_mode == "mixed":
+        if options.count < 2:
+            raise ValueError("Fixed demo allocation requires at least 2 CVs")
+        if not 1 <= options.demo_number_count < options.count:
+            raise ValueError(
+                f"Demo-number count must be between 1 and {options.count - 1} "
+                "so at least one country-reserved number remains"
+            )
+    if options.reserved_phone_country is not None:
+        if options.phone_number_mode != "mixed":
+            raise ValueError("A fixed reserved-number country requires fixed demo allocation")
+        if options.reserved_phone_country not in options.countries:
+            raise ValueError("Reserved-number country must be one of the selected countries")
+    if not 1 <= options.concurrency <= MAX_WEB_CONCURRENCY:
         raise ValueError(
-            f"Demo-number count must be between 0 and the batch size ({options.count})"
-        )
-    if options.phone_number_mode == "shared_demo" and not is_demo_phone(
-        options.shared_demo_number or ""
-    ):
-        raise ValueError(
-            "Shared demo number must be +210 followed by 9 digits "
-            "(for example, +210000000000)"
+            f"Concurrency must be between 1 and {MAX_WEB_CONCURRENCY}"
         )
 
 
@@ -192,13 +200,9 @@ def create_plan(options: GenerationOptions) -> List[ResumePlan]:
         identifier = base64.urlsafe_b64encode(uuid.uuid4().bytes).rstrip(b"=").decode()
         first_name, last_name = selected_names[index]
         phone = (
-            options.shared_demo_number or ""
-            if options.phone_number_mode == "shared_demo"
-            else (
-                unique_demo_phone()
-                if index in demo_indexes
-                else fictional_phone(countries[index])
-            )
+            unique_demo_phone()
+            if index in demo_indexes
+            else fictional_phone(options.reserved_phone_country or countries[index])
         )
         plans.append(
             ResumePlan(
@@ -273,8 +277,6 @@ def _relative_path(plan: ResumePlan, flat: bool) -> str:
 class ResumeGenerator:
     """Generate a bounded concurrent batch without persisting keys or CVs."""
 
-    concurrency = WEB_CONCURRENCY
-
     def generate(
         self,
         api_key: str,
@@ -303,7 +305,7 @@ class ResumeGenerator:
                 mime_type=MIME_TYPES[plan.output_format],
             )
 
-        with ThreadPoolExecutor(max_workers=self.concurrency) as executor:
+        with ThreadPoolExecutor(max_workers=options.concurrency) as executor:
             future_to_plan = {
                 executor.submit(generate_one, plan): plan for plan in plans
             }

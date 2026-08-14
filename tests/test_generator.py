@@ -4,7 +4,7 @@ import time
 import unittest
 
 from cv_generator.api import Completion, TokenUsage
-from cv_generator.config import INDUSTRIES, WEB_CONCURRENCY
+from cv_generator.config import INDUSTRIES, MAX_WEB_CONCURRENCY, WEB_CONCURRENCY
 from cv_generator.generator import (
     GenerationOptions,
     ResumeGenerator,
@@ -102,36 +102,64 @@ class GeneratorTests(unittest.TestCase):
         local_phones = [plan.phone for plan in plans if not plan.phone.startswith("+210")]
         self.assertEqual(len(demo_phones), 7)
         self.assertEqual(len(local_phones), 17)
+        self.assertEqual(len(set(demo_phones)), 7)
         self.assertTrue(all(re.fullmatch(r"\+44 7700 900\d{3}", phone) for phone in local_phones))
 
     def test_mixed_mode_rejects_demo_count_above_batch_size(self):
-        with self.assertRaisesRegex(ValueError, "between 0 and the batch size"):
+        with self.assertRaisesRegex(ValueError, "between 1 and 2"):
             create_plan(
                 GenerationOptions(
                     count=3,
                     phone_number_mode="mixed",
-                    demo_number_count=4,
+                    demo_number_count=3,
                 )
             )
 
-    def test_shared_demo_mode_assigns_the_same_number_to_every_cv(self):
-        shared_number = "+210123456789"
+    def test_mixed_mode_can_use_one_reserved_country_for_the_remainder(self):
         plans = create_plan(
             GenerationOptions(
-                count=12,
-                phone_number_mode="shared_demo",
-                shared_demo_number=shared_number,
+                count=20,
+                countries=("US", "UK"),
+                phone_number_mode="mixed",
+                demo_number_count=6,
+                reserved_phone_country="UK",
             )
         )
-        self.assertEqual({plan.phone for plan in plans}, {shared_number})
+        local_plans = [plan for plan in plans if not plan.phone.startswith("+210")]
+        self.assertEqual(len(local_plans), 14)
+        self.assertTrue(
+            all(re.fullmatch(r"\+44 7700 900\d{3}", plan.phone) for plan in local_plans)
+        )
+        self.assertEqual({plan.country for plan in plans}, {"US", "UK"})
 
-    def test_shared_demo_mode_rejects_an_invalid_number(self):
-        with self.assertRaisesRegex(ValueError, "Shared demo number must be"):
+    def test_mixed_mode_defaults_remainder_to_each_plan_country(self):
+        plans = create_plan(
+            GenerationOptions(
+                count=20,
+                countries=("US", "UK"),
+                phone_number_mode="mixed",
+                demo_number_count=6,
+            )
+        )
+        for plan in plans:
+            if plan.phone.startswith("+210"):
+                continue
+            expected = (
+                r"\+44 7700 900\d{3}"
+                if plan.country == "UK"
+                else r"\+1 \d{3}-555-01\d{2}"
+            )
+            self.assertRegex(plan.phone, expected)
+
+    def test_reserved_phone_country_must_be_selected(self):
+        with self.assertRaisesRegex(ValueError, "one of the selected countries"):
             create_plan(
                 GenerationOptions(
-                    count=2,
-                    phone_number_mode="shared_demo",
-                    shared_demo_number="+210123",
+                    count=4,
+                    countries=("US",),
+                    phone_number_mode="mixed",
+                    demo_number_count=2,
+                    reserved_phone_country="UK",
                 )
             )
 
@@ -165,6 +193,26 @@ class GeneratorTests(unittest.TestCase):
         self.assertGreater(client.maximum_active, 1)
         self.assertLessEqual(client.maximum_active, WEB_CONCURRENCY)
         self.assertTrue(all("/" not in item.relative_path for item in result.documents))
+
+    def test_generation_uses_user_selected_concurrency(self):
+        client = FakeClient()
+        result = ResumeGenerator().generate(
+            api_key="unused",
+            options=GenerationOptions(
+                count=9,
+                countries=("UK",),
+                industry_codes=(5,),
+                output_formats=("txt",),
+                concurrency=3,
+            ),
+            client=client,
+        )
+        self.assertEqual(result.errors, [])
+        self.assertEqual(client.maximum_active, 3)
+
+    def test_concurrency_is_bounded(self):
+        with self.assertRaisesRegex(ValueError, f"between 1 and {MAX_WEB_CONCURRENCY}"):
+            create_plan(GenerationOptions(concurrency=MAX_WEB_CONCURRENCY + 1))
 
 
 if __name__ == "__main__":

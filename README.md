@@ -8,9 +8,9 @@ The app supports:
 
 - United States and United Kingdom CVs, with officially reserved fictional phone
   number ranges
-- Four phone-routing modes: country-reserved numbers, unique `+210` demo numbers,
-  one user-supplied `+210` number shared by every CV, or an exact randomly assigned
-  mix of local and demo numbers
+- Three clear phone-routing modes: country-reserved numbers, unique `+210` demo
+  numbers for every CV, or an exact demo allocation with the remainder drawn from
+  the selected-country mix or one chosen country's reserved range
 - Four selectable colour themes, each with purpose-designed light and dark variants
 - OpenAI (default: `gpt-4.1-mini`) and Groq, plus a custom OpenAI-compatible base URL
 - Ten numbered industries, including Sales and Business Development
@@ -18,7 +18,7 @@ The app supports:
 - Flat or industry/experience/progression ZIP layouts
 - Balanced or random attribute distribution
 - Input/output token totals and estimated cost breakdowns
-- A fixed two-request concurrency limit per user session
+- User-selectable request concurrency from 1 to 20, defaulting to 5
 
 ## Run locally
 

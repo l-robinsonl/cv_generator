@@ -46,9 +46,8 @@ OUTPUT_FORMATS = ("pdf", "docx", "txt")
 
 PHONE_NUMBER_MODES = {
     "local": "Country-reserved",
-    "demo": "Unique demo numbers",
-    "shared_demo": "One shared demo number",
-    "mixed": "Mixed batch",
+    "demo": "All unique demo numbers",
+    "mixed": "Fixed demo allocation",
 }
 DEMO_PHONE_PREFIX = "+210"
 DEMO_PHONE_SUFFIX_DIGITS = 9
@@ -101,4 +100,5 @@ LAST_NAMES = (
 )
 
 MAX_RESUMES = 100
-WEB_CONCURRENCY = 2
+WEB_CONCURRENCY = 5
+MAX_WEB_CONCURRENCY = 20
