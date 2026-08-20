@@ -10,6 +10,7 @@ from cv_generator.config import (
     COUNTRIES,
     EXPERIENCE_LEVELS,
     INDUSTRIES,
+    MAX_JOB_DESCRIPTION_CHARS,
     MAX_RESUMES,
     MAX_WEB_CONCURRENCY,
     OUTPUT_FORMATS,
@@ -21,6 +22,10 @@ from cv_generator.generator import (
     GenerationOptions,
     GenerationResult,
     ResumeGenerator,
+)
+from cv_generator.job_description import (
+    SUPPORTED_JOB_DESCRIPTION_TYPES,
+    extract_job_description,
 )
 
 
@@ -850,6 +855,7 @@ with st.container(key="generation_panel"):
             options=list(INDUSTRIES),
             default=list(INDUSTRIES),
             format_func=lambda value: f"{value} — {INDUSTRIES[value]}",
+            help="Sales and Marketing are available as separate industry selections.",
         )
         output_formats = st.multiselect(
             "Output formats",
@@ -879,6 +885,64 @@ with st.container(key="generation_panel"):
             help="When off, ZIP files use industry/experience/progression folders.",
         )
 
+    st.markdown("#### Target job (optional)")
+    st.caption(
+        "Add a job description to tailor the batch and choose an exact mix of strong "
+        "and weak matches."
+    )
+    job_source = st.radio(
+        "Job description source",
+        options=("Paste text", "Upload file"),
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    job_description = ""
+    job_description_error = None
+    if job_source == "Paste text":
+        job_description = st.text_area(
+            "Job description",
+            height=180,
+            max_chars=MAX_JOB_DESCRIPTION_CHARS,
+            placeholder="Paste the role, responsibilities, and requirements here…",
+        ).strip()
+    else:
+        uploaded_job = st.file_uploader(
+            "Job description file",
+            type=list(SUPPORTED_JOB_DESCRIPTION_TYPES),
+            help="Supported formats: TXT, Markdown, DOCX, and text-based PDF.",
+        )
+        if uploaded_job is not None:
+            try:
+                job_description = extract_job_description(
+                    uploaded_job.name, uploaded_job.getvalue()
+                )
+            except ValueError as error:
+                job_description_error = str(error)
+                st.error(job_description_error)
+            else:
+                st.success(
+                    f"Loaded {uploaded_job.name} ({len(job_description):,} characters)."
+                )
+
+    if job_description:
+        default_good_matches = (int(count) + 1) // 2
+        good_match_count = st.slider(
+            "Good job matches",
+            min_value=0,
+            max_value=int(count),
+            value=default_good_matches,
+            step=1,
+            help="The rest of the batch will be plausible but intentionally poor matches.",
+        )
+        st.caption(
+            f"Batch mix: {good_match_count} good match"
+            f"{'es' if good_match_count != 1 else ''} · "
+            f"{int(count) - good_match_count} poor match"
+            f"{'es' if int(count) - good_match_count != 1 else ''}"
+        )
+    else:
+        good_match_count = None
+
     with st.expander("Advanced API settings"):
         base_url = st.text_input(
             "Custom OpenAI-compatible base URL",
@@ -891,6 +955,7 @@ with st.container(key="generation_panel"):
         "Generate CVs",
         type="primary",
         use_container_width=True,
+        disabled=job_description_error is not None,
     )
 
 if submitted:
@@ -910,6 +975,8 @@ if submitted:
         demo_number_count=int(demo_number_count),
         reserved_phone_country=reserved_phone_country,
         concurrency=int(concurrency),
+        job_description=job_description or None,
+        good_match_count=good_match_count,
     )
     progress_bar = st.progress(0, text="Preparing generation plan…")
 
