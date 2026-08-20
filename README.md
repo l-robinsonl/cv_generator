@@ -14,7 +14,9 @@ The app supports:
 - Twelve selectable colour themes, from restrained palettes to neon colourways, each
   with purpose-designed light and dark variants
 - OpenAI (default: `gpt-4.1-mini`) and Groq, plus a custom OpenAI-compatible base URL
-- Ten numbered industries, including Sales and Business Development
+- Ten numbered industries, with separate Sales and Marketing selections
+- Optional pasted or uploaded (TXT, Markdown, DOCX, or PDF) job descriptions, with
+  an exact user-selected mix of good and intentionally poor matches
 - PDF, DOCX, TXT, or a balanced/random mix
 - Flat or industry/experience/progression ZIP layouts
 - Balanced or random attribute distribution
